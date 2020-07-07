@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def main():
-    st.sidebar.image('LOGO_TONELLO.jpg', width=250)
+    st.sidebar.image('LOGO_TONELLO.JPG', width=250)
     st.title('CFC Tonello')
 
     file  = st.sidebar.file_uploader('Arquivo das aulas (.csv)', type = 'csv')
