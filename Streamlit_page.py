@@ -9,7 +9,7 @@ def main():
     st.sidebar.image('https://media.giphy.com/media/KyBX9ektgXWve/giphy.gif', width=250)
     if file is not None:
         df = pd.read_csv(file)
-        st.markdown('Número total de aulas:')
+        st.markdown('Número total de aulas dadas por todos os instrutores:')
         st.markdown(df.shape[0])
         st.markdown(' ')
     
@@ -19,25 +19,33 @@ def main():
         df['final_aula'] = pd.to_datetime(df[['Data', 'final_aula']].agg(' '.join, axis=1), format='%d/%m/%Y %H:%M')
 
         df['tempo_aula'] = (df['final_aula'] - df['comeco_aula'])
-        df['n_aula'] = df['tempo_aula'].astype('timedelta64[m]')/50
+        df['n_aula'] = df['tempo_aula'].astype('timedelta64[m]') / 50
 
-        df = df.drop(['CFC','CPF do instrutor', 'CPF do aluno', 'Biometria', 'Status', 'Periodo'], axis=1)
-        df = df.drop(['Data','Horário'], axis=1)
+        df = df.drop(['CFC','CPF do instrutor', 'CPF do aluno', 'Periodo'], axis=1)
+        df = df.drop(['Data','Horário', 'tempo_aula', 'Biometria'], axis=1)
 
         df = df[['Instrutor', 'Categoria' , 'comeco_aula', 'final_aula', 'n_aula', 'Aluno', 'Veículo', 'KM', \
-            'KM Inicial', 'KM Final', 'tempo_aula']]
+            'KM Inicial', 'KM Final', 'Status']]
         
         instrutores = list(df['Instrutor'].unique())
         
         instrutor = st.selectbox('Selecione um instrutor:', instrutores)
         df_instrutor = df[df['Instrutor'] == instrutor]
+        
+        total = df_instrutor.shape[0]
+        df_instrutor = df_instrutor[df_instrutor['Status'].str.find('Cancelada') == -1]
+        validas = df_instrutor.shape[0]
+
+        
+        st.write('Aulas canceladas:', total - validas)
+
         df_catB = df_instrutor[df_instrutor['Categoria'] == 'B']
         df_catA = df_instrutor[df_instrutor['Categoria'] == 'A']
 
         aulasB = df_catB['n_aula'].sum()
         st.write('Aulas categoria B:', aulasB)
 
-        aulasA = df_catA['n_aula'].sum()
+        aulasA = df_catA['n_aula'].sum() * 0.5
         st.write('Aulas categoria A:', aulasA)
 
         st.write('Total:', (aulasB + aulasA))
@@ -47,7 +55,7 @@ def main():
         categorias = list(df['Categoria'].unique())
         cat = st.selectbox('Selecione uma categoria:', categorias)
         df_categorias = df_instrutor[df_instrutor['Categoria'] == cat]
-        num = st.slider('Escolha o numero de aulas que deseja ver', min_value=1, max_value=df_categorias.shape[0])
+        num = st.slider('Escolha o numero de aulas que deseja ver', min_value=5, max_value=df_categorias.shape[0])
         st.dataframe(df_categorias.head(num))
     
     else:
