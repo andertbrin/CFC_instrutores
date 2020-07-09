@@ -55,7 +55,7 @@ def main():
         categorias = list(df['Categoria'].unique())
         cat = st.selectbox('Selecione uma categoria:', categorias)
         df_categorias = df_instrutor[df_instrutor['Categoria'] == cat]
-        num = st.slider('Escolha o numero de aulas que deseja ver', min_value=5, max_value=df_categorias.shape[0])
+        num = st.slider('Escolha o numero de aulas que deseja ver', min_value=1, max_value=df_categorias.shape[0])
         st.dataframe(df_categorias.head(num))
     
     else:
