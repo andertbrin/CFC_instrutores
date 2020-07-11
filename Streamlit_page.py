@@ -45,11 +45,37 @@ def main():
         aulasB = df_catB['n_aula'].sum()
         st.write('Aulas categoria B:', aulasB)
 
-        aulasA = df_catA['n_aula'].sum() * 0.5
-        st.write('Aulas categoria A:', aulasA)
+        df_catA['d_begin'] = (df_catA['comeco_aula'] - df_catA['comeco_aula'].shift(1)).astype('timedelta64[m]')
+        df_catA['d_end'] = (df_catA['final_aula'] - df_catA['final_aula'].shift(1)).astype('timedelta64[m]')
+        df_catA['d_end_s2'] = (df_catA['final_aula'] - df_catA['final_aula'].shift(2)).astype('timedelta64[m]')
 
-        st.write('Total:', (aulasB + aulasA))
+        df_catA['test'] = ((df_catA['d_begin'] < 15) | (df_catA['d_end'] < 15) | (df_catA['d_end_s2'] < 40))
+        df_catA['test_2'] = ((df_catA['d_end'] - df_catA['d_begin'] == 0) & (df_catA['n_aula'] == 2.0) & (df_catA['d_begin'] < 60))
 
+        aulas_s = 0
+        aulas_d = 0
+        for i in range(len(df_catA['n_aula'])):
+            if df_catA['test'].iloc[i] == False:
+                aulas_s += df_catA['n_aula'].iloc[i]
+            else:
+                aulas_s -= df_catA['n_aula'].iloc[i]
+
+            if df_catA['test_2'].iloc[i] == True:
+                aulas_s -= df_catA['n_aula'].iloc[i]
+                
+            if df_catA['test'].iloc[i] == True:
+                aulas_d += df_catA['n_aula'].iloc[i]
+            
+            if df_catA['test_2'].iloc[i] == True:
+                aulas_d += df_catA['n_aula'].iloc[i] * 0.5
+                
+        aulasA = df_catA['n_aula'].sum()
+        st.write('Aulas categoria A: ', aulasA)
+
+        st.write('Aulas Cat A com 1 aluno: ', aulas_s)
+        st.write('Aulas Cat A com 2 alunos: ', aulas_d)
+        
+        # st.write('Total:', (aulasB + aulasA))
 
 
         categorias = list(df['Categoria'].unique())
