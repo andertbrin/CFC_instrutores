@@ -9,9 +9,6 @@ def main():
     st.sidebar.image('https://media.giphy.com/media/KyBX9ektgXWve/giphy.gif', width=250)
     if file is not None:
         df = pd.read_csv(file)
-        st.markdown('Número total de aulas dadas por todos os instrutores:')
-        st.markdown(df.shape[0])
-        st.markdown(' ')
     
         df['comeco_aula'] = df['Horário'].astype(str).str.slice(0,5)
         df['final_aula'] = df['Horário'].astype(str).str.slice(-5)
