@@ -1,5 +1,4 @@
 CFC_instrutores
 
-Página no streamlit para controle de aula dos intrutores
-
-teste git clone
+Aplicação para o controle de aulas dadas pelos instrutores quilometros
+rodados pelos carros e aulas realizadas pelos alunos. 
